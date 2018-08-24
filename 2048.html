@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>2048</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<style>
+		body{
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			touch-action:none;
+			user-select: none;
+			-webkit-touch-callout: none;
+		}
+	</style>
+</head>
+<body>
+
+<div id="container">
+
+</div>
+
+<script src="./myjquery.js"></script>
+<script type="text/javascript" src='./2048.class.js'></script>
+
+<script type="text/javascript">
+
+	// 实例化游戏
+	var game = new Game('#container');
+
+	// 可自定义游戏结束后执行的事件,不设置则默认为alert('game over');
+	/*game.event.ongameover = function(){
+		if(window.confirm('你的分数是'+game.grade.gradeData+",是否重新开始?")){
+			if(window.confirm('是否降低难度？')){
+				game.init(++game.rows,++game.cols)
+			}else{
+				game.init();
+			}
+
+		}
+	}*/
+
+	// 开启控制台打印数据(可选配置)
+	//game.consolePrint(true)
+
+	// pc端控制
+	$(document).on('keydown',function(e){
+
+		switch(e.keyCode){
+			case 37:; //     ← || a
+			case 65: game.event('left');break;
+			case 39:; //     → || d
+			case 68: game.event('right');break;
+			case 38:; //     ↑ || w
+			case 87: game.event('up');break;
+			case 40:; //     ↓ || s
+			case 83: game.event('down');break;
+		}
+	})
+
+	// 移动端支持（滑动事件）
+	var touchstart = []; //开始位置
+	window.ontouchstart=function(e){
+		e.preventDefault();
+	}
+	document.addEventListener('touchstart',function(e){
+
+		touchstart = [e.touches[0].clientX,e.touches[0].clientY];
+	})
+	var touchend; //结束位置
+	document.addEventListener('touchmove',function(e){
+		touchend = [e.touches[0].clientX,e.touches[0].clientY];
+	})
+
+	document.addEventListener('touchend',function(e){
+
+		if(Math.abs(touchend[0] - touchstart[0]) > Math.abs(touchend[1]-touchstart[1]) && Math.abs(touchend[0] - touchstart[0]) > 50){
+			if(touchend[0] - touchstart[0] > 0){
+				game.event('right') // 右方移动
+			}else{
+				game.event('left') // 向左移动
+			}
+
+		}else if(Math.abs(touchend[1] - touchstart[1]) > 50){
+			if(touchend[1] - touchstart[1] > 0){
+				game.event('down') // 向下移动
+			}else{
+				game.event('up') // 向上移动
+			}
+		}
+	})
+</script>
+</body>
+</html>
